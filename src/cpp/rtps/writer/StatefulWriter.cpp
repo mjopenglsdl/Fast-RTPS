@@ -287,7 +287,10 @@ void StatefulWriter::unsent_change_added_to_history(
                     }
                 }
 
-                periodic_hb_event_->restart_timer(max_blocking_time);
+                if (there_are_remote_readers_)
+                {
+                    periodic_hb_event_->restart_timer(max_blocking_time);
+                }
                 if ( (mp_listener != nullptr) && this->is_acked_by_all(change) )
                 {
                     mp_listener->onWriterChangeReceivedByAll(this, change);
@@ -742,6 +745,16 @@ void StatefulWriter::update_reader_info(bool create_sender_resources)
         {
             part->createSenderResources(loc);
         });
+    }
+
+    there_are_remote_readers_ = false;
+    for (ReaderProxy* reader : matched_readers_)
+    {
+        if (!reader->is_local_reader())
+        {
+            there_are_remote_readers_ = true;
+            break;
+        }
     }
 }
 
