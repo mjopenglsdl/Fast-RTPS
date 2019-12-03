@@ -1008,13 +1008,14 @@ std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const
 
 bool RTPSParticipantImpl::sendSync(
         CDRMessage_t* msg,
-        const Locator_t& destination_loc,
+        LocatorsIterator& destination_locators_begin,
+        LocatorsIterator& destination_locators_end,
         std::chrono::steady_clock::time_point& max_blocking_time_point)
 {
     bool ret_code = false;
     std::unique_lock<std::timed_mutex> lock(m_send_resources_mutex_, std::defer_lock);
 
-    if(lock.try_lock_until(max_blocking_time_point))
+    if (lock.try_lock_until(max_blocking_time_point))
     {
         ret_code = true;
 
@@ -1022,10 +1023,11 @@ bool RTPSParticipantImpl::sendSync(
         {
             // Calculate next timeout.
             std::chrono::microseconds timeout =
-                std::chrono::duration_cast<std::chrono::microseconds>(
-                        max_blocking_time_point - std::chrono::steady_clock::now());
+                    std::chrono::duration_cast<std::chrono::microseconds>(
+                max_blocking_time_point - std::chrono::steady_clock::now());
 
-            send_resource->send(msg->buffer, msg->length, destination_loc, timeout);
+            send_resource->send(msg->buffer, msg->length, destination_locators_begin, destination_locators_end,
+                    timeout);
         }
     }
 
