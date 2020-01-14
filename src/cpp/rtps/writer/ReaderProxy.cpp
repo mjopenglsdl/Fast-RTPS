@@ -52,13 +52,9 @@ ReaderProxy::ReaderProxy(
     , last_nackfrag_count_(0)
 {
     nack_supression_event_ = new TimedEvent(writer_->getRTPSParticipant()->getEventResource(),
-            [&](TimedEvent::EventCode code) -> bool
+            [&]() -> bool
             {
-                if (TimedEvent::EVENT_SUCCESS == code)
-                {
-                    writer_->perform_nack_supression(reader_attributes_.guid());
-                }
-
+                writer_->perform_nack_supression(reader_attributes_.guid());
                 return false;
             },
             TimeConv::Time_t2MilliSecondsDouble(times.nackSupressionDuration));
