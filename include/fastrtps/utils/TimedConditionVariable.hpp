@@ -136,8 +136,7 @@ class TimedConditionVariable
         template<typename Mutex>
         bool wait_until(
                 std::unique_lock<Mutex>& lock,
-                const std::chrono::steady_clock::time_point& max_blocking_time,
-                std::function<bool()> predicate)
+                const std::chrono::steady_clock::time_point& max_blocking_time)
         {
             std::chrono::nanoseconds nsecs = max_blocking_time - std::chrono::steady_clock::now();
             struct timespec max_wait = { 0, 0 };
