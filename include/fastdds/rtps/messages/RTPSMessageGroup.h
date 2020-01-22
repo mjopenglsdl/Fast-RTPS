@@ -161,7 +161,7 @@ class Endpoint;
 
         void check_and_maybe_flush();
 
-        bool insert_submessage();
+        bool insert_submessage(bool is_big_submessage);
 
         bool add_info_dst_in_buffer(CDRMessage_t* buffer);
 

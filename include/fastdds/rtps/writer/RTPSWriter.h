@@ -156,6 +156,9 @@ public:
     //! Calculates the maximum size of the data
     uint32_t calculateMaxDataSize(uint32_t length);
 
+    //! Maximum fragment size minus the headers
+    static uint32_t get_max_fragment_payload_size();
+
     /**
      * Get listener
      * @return Listener
