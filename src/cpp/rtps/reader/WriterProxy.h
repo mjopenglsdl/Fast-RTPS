@@ -23,11 +23,11 @@
 #include <fastrtps/rtps/common/Types.h>
 #include <fastrtps/rtps/common/Locator.h>
 #include <fastrtps/rtps/common/CacheChange.h>
-#include <fastrtps/rtps/attributes/ReaderAttributes.h>
 #include <fastrtps/rtps/attributes/RTPSParticipantAllocationAttributes.hpp>
 #include <fastrtps/rtps/messages/RTPSMessageSenderInterface.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/rtps/common/LocatorSelectorEntry.hpp>
 
 #include <foonathan/memory/container.hpp>
 #include <foonathan/memory/memory_pool.hpp>
@@ -68,7 +68,6 @@ public:
     WriterProxy(
             StatefulReader* reader,
             const RemoteLocatorsAllocationAttributes& loc_alloc,
-            const VariableLengthDataLimits& limits,
             const ResourceLimitedContainerConfig& changes_allocation);
 
     /**
@@ -159,21 +158,22 @@ public:
             const SequenceNumber_t& seq_num) const;
 
     /**
-     * Get the attributes of the writer represented by this proxy.
-     * @return const reference to the attributes of the writer represented by this proxy.
-     */
-    inline const WriterProxyData& attributes() const
-    {
-        return attributes_;
-    }
-
-    /**
      * Get the GUID of the writer represented by this proxy.
      * @return const reference to the GUID of the writer represented by this proxy.
      */
     inline const GUID_t& guid() const
     {
-        return attributes_.guid();
+        return locators_entry_.remote_guid;
+    }
+
+    inline const GUID_t& persistence_guid() const
+    {
+        return persistence_guid_;
+    }
+
+    inline LivelinessQosPolicyKind liveliness_kind() const
+    {
+        return liveliness_kind_;
     }
 
     /**
@@ -182,7 +182,7 @@ public:
      */
     inline uint32_t ownership_strength() const
     {
-        return attributes_.m_qos.m_ownershipStrength.value;
+        return ownership_strength_;
     }
 
     /**
@@ -191,9 +191,9 @@ public:
      */
     inline const ResourceLimitedVector<Locator_t>& remote_locators_shrinked() const
     {
-        return attributes_.remote_locators().unicast.empty() ?
-               attributes_.remote_locators().multicast :
-               attributes_.remote_locators().unicast;
+        return locators_entry_.unicast.empty() ?
+               locators_entry_.multicast :
+               locators_entry_.unicast;
     }
 
     /**
@@ -339,8 +339,6 @@ private:
 
     //! Pointer to associated StatefulReader.
     StatefulReader* reader_;
-    //! Parameters of the WriterProxy
-    WriterProxyData attributes_;
     //!Timed event to postpone the heartbeatResponse.
     TimedEvent* heartbeat_response_;
     //! Timed event to send initial acknack.
@@ -371,6 +369,14 @@ private:
     ResourceLimitedVector<GuidPrefix_t> guid_prefix_as_vector_;
     //! Is the writer on the same process
     bool is_on_same_process_;
+    //! Taken from QoS
+    uint32_t ownership_strength_;
+    //! Taken from QoS
+    LivelinessQosPolicyKind liveliness_kind_;
+    //! Taken from proxy data
+    GUID_t persistence_guid_;
+    //! Taken from proxy data
+    LocatorSelectorEntry locators_entry_;
 
     using ChangeIterator = decltype(changes_received_)::iterator;
 

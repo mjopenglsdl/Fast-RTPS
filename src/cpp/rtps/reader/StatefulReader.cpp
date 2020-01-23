@@ -83,7 +83,7 @@ StatefulReader::StatefulReader(
     const RTPSParticipantAttributes& part_att = pimpl->getRTPSParticipantAttributes();
     for (size_t n = 0; n < att.matched_writers_allocation.initial; ++n)
     {
-        matched_writers_pool_.push_back(new WriterProxy(this, part_att.allocation.locators, part_att.allocation.data_limits, proxy_changes_config_));
+        matched_writers_pool_.push_back(new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_));
     }
 }
 
@@ -126,7 +126,7 @@ bool StatefulReader::matched_writer_add(
         if (matched_writers_.size() + matched_writers_pool_.size() < max_readers)
         {
             const RTPSParticipantAttributes& part_att = mp_RTPSParticipant->getRTPSParticipantAttributes();
-            wp = new WriterProxy(this, part_att.allocation.locators, part_att.allocation.data_limits, proxy_changes_config_);
+            wp = new WriterProxy(this, part_att.allocation.locators, proxy_changes_config_);
         }
         else
         {
@@ -214,7 +214,7 @@ bool StatefulReader::matched_writer_remove(
 
                 wproxy = *it;
                 matched_writers_.erase(it);
-                remove_persistence_guid(wproxy->guid(), wproxy->attributes().persistence_guid());
+                remove_persistence_guid(wproxy->guid(), wproxy->persistence_guid());
                 break;
             }
         }
@@ -311,7 +311,7 @@ bool StatefulReader::processDataMsg(
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {
             if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-                    pWP->attributes().m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                    pWP->liveliness_kind() == MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
                 auto wlp = this->mp_RTPSParticipant->wlp();
                 if (wlp != nullptr)
@@ -406,7 +406,7 @@ bool StatefulReader::processDataFragMsg(
         if (liveliness_lease_duration_ < c_TimeInfinite)
         {
             if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-                    pWP->attributes().m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                    pWP->liveliness_kind() == MANUAL_BY_TOPIC_LIVELINESS_QOS)
             {
                 auto wlp = this->mp_RTPSParticipant->wlp();
                 if ( wlp != nullptr)
@@ -541,7 +541,7 @@ bool StatefulReader::processHeartbeatMsg(
                 if (liveliness_lease_duration_ < c_TimeInfinite)
                 {
                     if (liveliness_kind_ == MANUAL_BY_TOPIC_LIVELINESS_QOS ||
-                            writer->attributes().m_qos.m_liveliness.kind == MANUAL_BY_TOPIC_LIVELINESS_QOS)
+                            writer->liveliness_kind() == MANUAL_BY_TOPIC_LIVELINESS_QOS)
                     {
                         auto wlp = this->mp_RTPSParticipant->wlp();
                         if ( wlp != nullptr)

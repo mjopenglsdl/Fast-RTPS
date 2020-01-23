@@ -143,7 +143,7 @@ StatefulWriter::StatefulWriter(
 
     for (size_t n = 0; n < att.matched_readers_allocation.initial; ++n)
     {
-        matched_readers_pool_.push_back(new ReaderProxy(m_times, part_att.allocation.locators, part_att.allocation.data_limits, this));
+        matched_readers_pool_.push_back(new ReaderProxy(m_times, part_att.allocation.locators, this));
     }
 }
 
@@ -1240,7 +1240,7 @@ bool StatefulWriter::matched_reader_add(
         if (matched_readers_.size() + matched_readers_pool_.size() < max_readers)
         {
             const RTPSParticipantAttributes& part_att = mp_RTPSParticipant->getRTPSParticipantAttributes();
-            rp = new ReaderProxy(m_times, part_att.allocation.locators, part_att.allocation.data_limits, this);
+            rp = new ReaderProxy(m_times, part_att.allocation.locators, this);
         }
         else
         {
@@ -1400,8 +1400,8 @@ bool StatefulWriter::matched_reader_add(
     }
 
     logInfo(RTPS_WRITER, "Reader Proxy " << rp->guid() << " added to " << this->m_guid.entityId << " with "
-                                         << rp->reader_attributes().remote_locators().unicast.size() << "(u)-"
-                                         << rp->reader_attributes().remote_locators().multicast.size() <<
+                                         << rdata.remote_locators().unicast.size() << "(u)-"
+                                         << rdata.remote_locators().multicast.size() <<
             "(m) locators");
 
     return true;
@@ -2016,7 +2016,7 @@ bool StatefulWriter::ack_timer_expired()
     {
         for (ReaderProxy* remote_reader : matched_readers_)
         {
-            if (remote_reader->reader_attributes().disable_positive_acks())
+            if (remote_reader->disable_positive_acks())
             {
                 remote_reader->acked_changes_set(last_sequence_number_ + 1);
             }
