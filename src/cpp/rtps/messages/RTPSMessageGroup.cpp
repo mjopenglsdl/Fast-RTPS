@@ -81,20 +81,6 @@ public:
 
 static thread_local std::unique_ptr<RTPSMessageGroup_t> tls_group;
 
-bool sort_changes_group (
-        CacheChange_t* c1,
-        CacheChange_t* c2)
-{
-    return(c1->sequenceNumber < c2->sequenceNumber);
-}
-
-bool sort_SeqNum(
-        const SequenceNumber_t& s1,
-        const SequenceNumber_t& s2)
-{
-    return(s1 < s2);
-}
-
 typedef std::pair<SequenceNumber_t,SequenceNumberSet_t> pair_T;
 
 void prepare_SequenceNumberSet(
@@ -105,8 +91,7 @@ void prepare_SequenceNumberSet(
     bool new_pair = true;
     bool seqnumset_init = false;
     uint32_t count = 0;
-    for (auto it = changesSeqNum.begin();
-            it!=changesSeqNum.end(); ++it)
+    for (auto it = changesSeqNum.begin(); it!=changesSeqNum.end(); ++it)
     {
         if (new_pair)
         {
@@ -142,52 +127,6 @@ void prepare_SequenceNumberSet(
                 --it;
                 new_pair = true;
             }
-        }
-    }
-}
-
-bool compare_remote_participants(
-        const std::vector<GUID_t>& remote_participants1,
-        const std::vector<GuidPrefix_t>& remote_participants2)
-{
-    if (remote_participants1.size() == remote_participants2.size())
-    {
-        for (auto& participant : remote_participants1)
-        {
-            if (std::find(remote_participants2.begin(), remote_participants2.end(), participant.guidPrefix) ==
-                    remote_participants2.end())
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    return false;
-}
-
-void get_participant_from_endpoint(
-        const GUID_t& endpoint,
-        std::vector<GuidPrefix_t>& participants)
-{
-    if (std::find(participants.begin(), participants.end(), endpoint.guidPrefix) == participants.end())
-    {
-        participants.push_back(endpoint.guidPrefix);
-    }
-}
-
-void get_participants_from_endpoints(
-        const std::vector<GUID_t>& endpoints,
-        std::vector<GuidPrefix_t>& participants)
-{
-    participants.clear();
-
-    for (const GUID_t& endpoint : endpoints)
-    {
-        if (std::find(participants.begin(), participants.end(), endpoint.guidPrefix) == participants.end())
-        {
-            participants.push_back(endpoint.guidPrefix);
         }
     }
 }

@@ -41,10 +41,6 @@ using namespace eprosima::fastrtps;
 using namespace ::rtps;
 using namespace std::chrono;
 
-using namespace std::chrono;
-
-using namespace std::chrono;
-
 using eprosima::fastdds::dds::TopicDataType;
 
 PublisherImpl::PublisherImpl(
@@ -159,8 +155,8 @@ bool PublisherImpl::create_new_change_with_params(
     }
 
     // Block lowlevel writer
-    auto max_blocking_time = std::chrono::steady_clock::now() +
-        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
+    auto max_blocking_time = steady_clock::now() +
+        microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
 
 #if HAVE_STRICT_REALTIME
     std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex(), std::defer_lock);
@@ -258,7 +254,7 @@ bool PublisherImpl::create_new_change_with_params(
 
             if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
             {
-                lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
+                lifespan_duration_us_ = duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
                 lifespan_timer_->update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
                 lifespan_timer_->restart_timer();
             }

@@ -47,7 +47,7 @@ public:
 
     class timeout : public std::runtime_error
     {
-public:
+    public:
 
         timeout()
             : std::runtime_error("timeout") {}
@@ -68,7 +68,7 @@ public:
             Endpoint* endpoint,
             const RTPSMessageSenderInterface& msg_sender,
             std::chrono::steady_clock::time_point max_blocking_time_point =
-            std::chrono::steady_clock::now() + std::chrono::hours(24));
+                std::chrono::steady_clock::now() + std::chrono::hours(24));
 
     ~RTPSMessageGroup() noexcept(false);
 
@@ -142,7 +142,10 @@ public:
             FragmentNumberSet_t fn_state,
             int32_t count);
 
-    uint32_t get_current_bytes_processed() { return currentBytesSent_ + full_msg_->length; }
+    inline uint32_t get_current_bytes_processed() const
+    { 
+        return currentBytesSent_ + full_msg_->length; 
+    }
 
     /**
      * To be used whenever destination locators/guids change between two add_xxx calls.
