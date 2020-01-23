@@ -37,14 +37,8 @@
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
 
-#include <functional>
-
 using namespace eprosima::fastrtps;
 using namespace ::rtps;
-using namespace std::chrono;
-
-using namespace std::chrono;
-
 using namespace std::chrono;
 
 using eprosima::fastdds::dds::TopicDataType;
@@ -161,8 +155,8 @@ bool PublisherImpl::create_new_change_with_params(
     }
 
     // Block lowlevel writer
-    auto max_blocking_time = std::chrono::steady_clock::now() +
-        std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
+    auto max_blocking_time = steady_clock::now() +
+        microseconds(::TimeConv::Time_t2MicroSecondsInt64(m_att.qos.m_reliability.max_blocking_time));
 
 #if HAVE_STRICT_REALTIME
     std::unique_lock<RecursiveTimedMutex> lock(mp_writer->getMutex(), std::defer_lock);
@@ -224,10 +218,10 @@ bool PublisherImpl::create_new_change_with_params(
                     return false;
                 }
 
-                /// Fragment the data.
+                // Fragment the data.
                 // Set the fragment size to the cachechange.
-                // Note: high_mark will always be a value that can be casted to uint16_t)
-                ch->setFragmentSize((uint16_t)final_high_mark_for_frag);
+                ch->setFragmentSize(static_cast<uint16_t>(
+                    (std::min)(final_high_mark_for_frag, RTPSMessageGroup::get_max_fragment_payload_size())));
             }
 
             InstanceHandle_t change_handle = ch->instanceHandle;
@@ -260,7 +254,7 @@ bool PublisherImpl::create_new_change_with_params(
 
             if (m_att.qos.m_lifespan.duration != c_TimeInfinite)
             {
-                lifespan_duration_us_ = std::chrono::duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
+                lifespan_duration_us_ = duration<double, std::ratio<1, 1000000>>(m_att.qos.m_lifespan.duration.to_ns() * 1e-3);
                 lifespan_timer_->update_interval_millisec(m_att.qos.m_lifespan.duration.to_ns() * 1e-6);
                 lifespan_timer_->restart_timer();
             }
