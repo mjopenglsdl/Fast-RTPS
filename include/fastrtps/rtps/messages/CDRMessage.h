@@ -59,6 +59,12 @@ namespace CDRMessage{
             octet* o,
             uint32_t length);
 
+    inline bool readArray(
+            CDRMessage_t*msg,
+            octet* arr,
+            size_t size);
+
+
     inline bool readDataReversed(
             CDRMessage_t* msg,
             octet* o,
@@ -110,6 +116,7 @@ namespace CDRMessage{
     inline bool readString(
             CDRMessage_t*msg,
             std::string* p_str);
+
     inline bool readString(
             CDRMessage_t*msg,
             string_255* stri);
@@ -255,6 +262,10 @@ namespace CDRMessage{
     inline bool addString(
             CDRMessage_t*msg,
             const std::string& in_str);
+
+    inline bool addString(
+            CDRMessage_t*msg,
+            const string_255& in_str);
 
     inline bool addOctetVector(
             CDRMessage_t*msg,

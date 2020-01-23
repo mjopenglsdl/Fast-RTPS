@@ -58,12 +58,14 @@ public:
      * Constructor.
      * @param times WriterTimes to use in the ReaderProxy.
      * @param loc_alloc Maximum number of remote locators to keep in the ReaderProxy.
+     * @param limits Maximum size allowed for variable length fields on messages
      * @param writer Pointer to the StatefulWriter creating the reader proxy.
      */
     ReaderProxy(
             const WriterTimes& times,
             const RemoteLocatorsAllocationAttributes& loc_alloc,
-            StatefulWriter* writer);
+            const VariableLengthDataLimits& limits,
+           StatefulWriter* writer);
 
     /**
      * Activate this proxy associating it to a remote reader.

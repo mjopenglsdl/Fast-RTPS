@@ -68,6 +68,7 @@ public:
     WriterProxy(
             StatefulReader* reader,
             const RemoteLocatorsAllocationAttributes& loc_alloc,
+            const VariableLengthDataLimits& limits,
             const ResourceLimitedContainerConfig& changes_allocation);
 
     /**

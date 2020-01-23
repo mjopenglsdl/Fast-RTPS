@@ -275,6 +275,21 @@ inline bool CDRMessage::readOctetVector(CDRMessage_t*msg,std::vector<octet>* ocv
     return valid;
 }
 
+inline bool CDRMessage::readArray(CDRMessage_t*msg, octet* arr, size_t size)
+{
+    if(msg->pos+4>msg->length)
+        return false;
+    uint32_t datasize;
+    bool valid = CDRMessage::readUInt32(msg,&datasize);
+    if (size < datasize)
+        return false;
+    valid &= CDRMessage::readData(msg,arr,datasize);
+    int rest = (datasize) % 4;
+    rest = rest== 0 ? 0 : 4-rest;
+    msg->pos+=rest;
+    return valid;
+}
+
 
 inline bool CDRMessage::readString(CDRMessage_t*msg, std::string* stri)
 {
@@ -647,6 +662,25 @@ inline bool CDRMessage::addString(CDRMessage_t*msg, const std::string& in_str)
 
     bool valid = CDRMessage::addUInt32(msg, str_siz+1);
     valid &= CDRMessage::addData(msg, (unsigned char*) data, str_siz+1);
+    if (rest != 0) {
+        octet oc = '\0';
+        for (int i = 0; i < rest; i++) {
+            valid &= CDRMessage::addOctet(msg, oc);
+        }
+    }
+    return valid;
+}
+
+inline bool CDRMessage::addString(CDRMessage_t*msg, const string_255& in_str)
+{
+    uint32_t str_siz = (uint32_t)in_str.size();
+    int rest = (str_siz+1) % 4;
+    if (rest != 0)
+        rest = 4 - rest; //how many you have to add
+
+    bool valid = CDRMessage::addUInt32(msg, str_siz+1);
+    valid &= CDRMessage::addData(msg,
+            (unsigned char*) in_str.c_str(), str_siz+1);
     if (rest != 0) {
         octet oc = '\0';
         for (int i = 0; i < rest; i++) {

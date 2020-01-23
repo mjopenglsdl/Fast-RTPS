@@ -58,9 +58,10 @@ constexpr size_t changes_node_size = memory::set_node_size<std::pair<size_t, Seq
 WriterProxy::WriterProxy(
         StatefulReader* reader,
         const RemoteLocatorsAllocationAttributes& loc_alloc,
+        const VariableLengthDataLimits& limits,
         const ResourceLimitedContainerConfig& changes_allocation)
     : reader_(reader)
-    , attributes_(loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators)
+    , attributes_(loc_alloc.max_unicast_locators, loc_alloc.max_multicast_locators, limits)
     , heartbeat_response_(nullptr)
     , initial_acknack_(nullptr)
     , last_heartbeat_count_(0)
