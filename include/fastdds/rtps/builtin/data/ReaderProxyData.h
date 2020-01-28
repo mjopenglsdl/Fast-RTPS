@@ -297,11 +297,13 @@ public:
          *  Read the information from a CDRMessage_t. The position of hte message must be in the beggining on the parameter list.
          * @param msg Pointer to the message.
          * @param network Reference to network factory for locator validation and transformation
+         * @param is_shm_transport_possible Indicates wether the Reader is reachable by SHM.
          * @return true on success
          */
     RTPS_DllAPI bool readFromCDRMessage(
             CDRMessage_t* msg,
-            const NetworkFactory& network);
+            const NetworkFactory& network,
+            bool is_shm_transport_possible);
 
     //!
     bool m_expectsInlineQos;
@@ -339,6 +341,42 @@ public:
          * @param rdata Pointer to the object from where the information must be copied.
          */
     void copy(ReaderProxyData* rdata);
+
+    void drop_locators(int32_t locator_kind)
+    {
+        {
+            auto& locators_vector = remote_locators_.unicast;
+            auto it = locators_vector.begin();
+
+            while (it != locators_vector.end())
+            {
+                if (it->kind == locator_kind)
+                {
+                    it = locators_vector.erase(it);
+                }
+                else
+                {
+                    it++;
+                }
+            }
+        }
+
+        {
+            auto& locators_vector = remote_locators_.multicast;
+            auto it = locators_vector.begin();
+            while (it != locators_vector.end())
+            {
+                if (it->kind == locator_kind)
+                {
+                    it = locators_vector.erase(it);
+                }
+                else
+                {
+                    it++;
+                }
+            }
+        }
+    }
 
 private:
 
