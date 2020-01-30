@@ -537,7 +537,7 @@ bool ReaderProxyData::readFromCDRMessage(
                         {
                             if (is_shm_transport_possible)
                             {
-                                if (temp_locator.kind == LOCATOR_KIND_SHMEM)
+                                if (temp_locator.kind == LOCATOR_KIND_SHM)
                                 {
                                     // First SHM locator
                                     if (!are_shm_default_locators_present)
@@ -556,7 +556,7 @@ bool ReaderProxyData::readFromCDRMessage(
                             }
                             else
                             {
-                                if (temp_locator.kind != LOCATOR_KIND_SHMEM)
+                                if (temp_locator.kind != LOCATOR_KIND_SHM)
                                 {
                                     remote_locators_.add_unicast_locator(temp_locator);
                                 }
@@ -573,7 +573,7 @@ bool ReaderProxyData::readFromCDRMessage(
                         {
                             if (is_shm_transport_possible)
                             {
-                                if (temp_locator.kind == LOCATOR_KIND_SHMEM)
+                                if (temp_locator.kind == LOCATOR_KIND_SHM)
                                 {
                                     // First SHM locator
                                     if (!are_shm_default_locators_present)
@@ -592,7 +592,7 @@ bool ReaderProxyData::readFromCDRMessage(
                             }
                             else
                             {
-                                if (temp_locator.kind != LOCATOR_KIND_SHMEM)
+                                if (temp_locator.kind != LOCATOR_KIND_SHM)
                                 {
                                     remote_locators_.add_multicast_locator(temp_locator);
                                 }
