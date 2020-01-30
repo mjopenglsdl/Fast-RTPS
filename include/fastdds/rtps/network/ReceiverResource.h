@@ -73,6 +73,11 @@ public:
      */
     void disable();
 
+    inline uint32_t max_message_size() const
+    {
+        return max_message_size_;
+    }
+
     /**
      * Resources can only be transfered through move semantics. Copy, assignment, and
      * construction outside of the factory are forbidden.
@@ -86,7 +91,7 @@ private:
     ReceiverResource(const ReceiverResource&) = delete;
     ReceiverResource& operator=(const ReceiverResource&) = delete;
 
-    ReceiverResource(fastdds::rtps::TransportInterface&, const Locator_t&, uint32_t);
+    ReceiverResource(fastdds::rtps::TransportInterface&, const Locator_t&);
     std::function<void()> Cleanup;
     std::function<bool(const Locator_t&)> LocatorMapsToManagedChannel;
     bool mValid; // Post-construction validity check for the NetworkFactory
@@ -94,6 +99,7 @@ private:
     std::mutex mtx;
     MessageReceiver* receiver;
     CDRMessage_t msg;
+    uint32_t max_message_size_;
 };
 
 } // namespace rtps

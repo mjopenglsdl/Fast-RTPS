@@ -26,16 +26,17 @@ namespace eprosima{
 namespace fastrtps{
 namespace rtps{
 
-ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_t& locator, uint32_t max_size)
+ReceiverResource::ReceiverResource(TransportInterface& transport, const Locator_t& locator)
         : Cleanup(nullptr)
         , LocatorMapsToManagedChannel(nullptr)
         , mValid(false)
         , mtx()
         , receiver(nullptr)
         , msg(0)
+        , max_message_size_(transport.max_recv_buffer_size())
 {
     // Internal channel is opened and assigned to this resource.
-    mValid = transport.OpenInputChannel(locator, this, max_size);
+    mValid = transport.OpenInputChannel(locator, this, max_message_size_);
     if (!mValid)
     {
         return; // Invalid resource to be discarded by the factory.
@@ -56,6 +57,7 @@ ReceiverResource::ReceiverResource(ReceiverResource&& rValueResource)
     mValid = rValueResource.mValid;
     rValueResource.mValid = false;
     msg = std::move(rValueResource.msg);
+    max_message_size_ = rValueResource.max_message_size_;
 }
 
 bool ReceiverResource::SupportsLocator(const Locator_t& localLocator)
