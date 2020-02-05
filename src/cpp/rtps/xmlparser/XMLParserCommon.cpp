@@ -87,6 +87,9 @@ const char* MAX_MULTICAST_LOCATORS = "max_multicast_locators";
 const char* TOTAL_PARTICIPANTS = "total_participants";
 const char* TOTAL_READERS = "total_readers";
 const char* TOTAL_WRITERS = "total_writers";
+const char* MAX_PROPERTIES = "max_properties";
+const char* MAX_USER_DATA = "max_user_data";
+const char* MAX_PARTITIONS = "max_partitions";
 
 /// Publisher-subscriber attributes
 const char* TOPIC = "topic";
