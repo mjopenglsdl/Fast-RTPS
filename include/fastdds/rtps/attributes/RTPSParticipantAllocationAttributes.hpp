@@ -91,7 +91,9 @@ struct RTPSParticipantAllocationAttributes
     }
 
 private:
-    ResourceLimitedContainerConfig total_endpoints(const ResourceLimitedContainerConfig& endpoints) const
+
+    ResourceLimitedContainerConfig total_endpoints(
+            const ResourceLimitedContainerConfig& endpoints) const
     {
         constexpr size_t max = std::numeric_limits<size_t>::max();
         size_t initial;
@@ -100,15 +102,16 @@ private:
 
         initial = participants.initial * endpoints.initial;
         maximum = (participants.maximum == max || endpoints.maximum == max)
-            ? max : participants.maximum * endpoints.maximum;
+                ? max : participants.maximum * endpoints.maximum;
         increment = std::max(participants.increment, endpoints.increment);
 
         return { initial, maximum, increment };
     }
+
 };
 
 const RTPSParticipantAllocationAttributes c_default_RTPSParticipantAllocationAttributes
-        = RTPSParticipantAllocationAttributes();
+    = RTPSParticipantAllocationAttributes();
 
 } /* namespace rtps */
 } /* namespace fastrtps */
