@@ -18,6 +18,9 @@
 #include <fastrtps/log/Log.h>
 
 #include <cstdlib>
+
+#include "plat_cfg.h"
+
 #ifdef _WIN32
 #include <windows.h>
 #endif

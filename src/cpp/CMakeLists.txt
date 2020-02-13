@@ -361,12 +361,20 @@ elseif(NOT EPROSIMA_INSTALLER)
         set(PRIVACY "PRIVATE")
     endif()
 
+
+    # windows spec
+    set(EXREA_LIBS)
+    if(WIN32)
+        set(EXREA_LIBS "ws2_32" "wsock32")
+    endif(WIN32)
+
     # Link library to external libraries.
     target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr foonathan_memory
         ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS}
         ${TINYXML2_LIBRARY}
         $<$<BOOL:${LINK_SSL}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+        ${EXREA_LIBS}
         )
 
     if(MSVC OR MSVC_IDE)

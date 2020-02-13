@@ -18,6 +18,8 @@
 
 #include <fastrtps/utils/TimedConditionVariable.hpp>
 
+#include "plat_cfg.h"
+
 #if defined(_WIN32)
 #include <windows.h>
 /*

@@ -22,13 +22,14 @@
 #include <chrono>
 #include <iostream>
 
-#if defined(_WIN32)
+
+#if _GTHREAD_USE_MUTEX_TIMEDLOCK
+#include <mutex>
+#elif defined(_WIN32)
 #include <thread>
 extern int clock_gettime(
         int,
         struct timespec* tv);
-#elif _GTHREAD_USE_MUTEX_TIMEDLOCK
-#include <mutex>
 #else
 #include <pthread.h>
 #endif
@@ -36,7 +37,11 @@ extern int clock_gettime(
 namespace eprosima {
 namespace fastrtps {
 
-#if defined(_WIN32)
+
+#if _GTHREAD_USE_MUTEX_TIMEDLOCK || !defined(__linux__)
+using TimedMutex = std::timed_mutex;
+using RecursiveTimedMutex = std::recursive_timed_mutex;
+#elif defined(_WIN32)
 class TimedMutex
 {
 public:
@@ -173,9 +178,6 @@ private:
 
     _Mtx_t mutex_;
 };
-#elif _GTHREAD_USE_MUTEX_TIMEDLOCK || !defined(__linux__)
-using TimedMutex = std::timed_mutex;
-using RecursiveTimedMutex = std::recursive_timed_mutex;
 #else
 class TimedMutex
 {
