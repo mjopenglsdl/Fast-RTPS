@@ -194,7 +194,7 @@ endif()
 
 include(${PROJECT_SOURCE_DIR}/cmake/dev/eprosima_libraries.cmake)
 
-find_eprosima_package(fastcdr)
+# find_eprosima_package(fastcdr)
 find_eprosima_thirdparty(Asio asio)
 find_eprosima_thirdparty(TinyXML2 tinyxml2)
 

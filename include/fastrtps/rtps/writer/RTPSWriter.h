@@ -25,6 +25,8 @@
 #include <vector>
 #include <memory>
 
+#include <functional>
+
 namespace eprosima {
 namespace fastrtps{
 namespace rtps {

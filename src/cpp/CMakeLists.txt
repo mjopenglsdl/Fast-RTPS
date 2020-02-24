@@ -152,7 +152,7 @@ else()
     set(HAVE_SECURITY 0)
 endif()
 
-if(WIN32)
+if(WIN32 AND NOT MINGW)
     list(APPEND ${PROJECT_NAME}_source_files
         ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps.rc
         )
@@ -283,6 +283,14 @@ else()
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_definitions(-D__DEBUG)
     endif()
+
+        # windows spec
+        set(EXREA_LIBS)
+        if(WIN32)
+            set(EXREA_LIBS "ws2_32" "wsock32")
+        endif(WIN32)
+
+        
     #Create library
     add_library(${PROJECT_NAME} ${${PROJECT_NAME}_source_files})
     set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
@@ -299,8 +307,14 @@ else()
     target_link_libraries(${PROJECT_NAME}
         ${CMAKE_THREAD_LIBS_INIT}
         ${EXTRA_LIBRARIES}
+        ${EXREA_LIBS}
         )
 
+    if(NOT TINYXML2_LIBRARY)
+        set(TINYXML2_LIBRARY libtinyxml2)
+    endif()
+    
+        
     if(TINYXML2_LIBRARY)
         target_link_libraries(${PROJECT_NAME}
             ${TINYXML2_LIBRARY}
@@ -453,4 +467,12 @@ else()
 
     set(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "Libraries" PARENT_SCOPE)
     set(CPACK_COMPONENT_LIBRARIES_DESCRIPTION "eProsima ${PROJECT_NAME_LARGE} libraries" PARENT_SCOPE)
+endif()
+
+
+
+# windows spec
+if(MINGW)
+    set(W32_LIBS  "iphlpapi" "shlwapi")
+    target_link_libraries(${PROJECT_NAME} ${W32_LIBS})
 endif()
